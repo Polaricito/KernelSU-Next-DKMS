@@ -1,0 +1,12 @@
+[Unit]
+Description=KernelSU kernel module loader (via modloader)
+After=local-fs.target
+Before=waydroid-container.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/load-kernelsu
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

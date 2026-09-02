@@ -1,0 +1,11 @@
+[Unit]
+Description=Stage KernelSU daemon (ksud) into Waydroid container data
+After=kernelsu-autload.service local-fs.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/kernelsu-stage.sh
+
+[Install]
+WantedBy=multi-user.target

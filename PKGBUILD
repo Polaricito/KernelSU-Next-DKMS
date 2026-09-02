@@ -1,16 +1,18 @@
 # shellcheck shell=bash
-# AUR Maintainer: Shadichy <shadichy@blisslabs.org>
+# AUR Maintainer original: Shadichy <shadichy@blisslabs.org>
+# Adaptado para KernelSU-Next (KSU-Next) — ver notas TODO abajo
 
-_pkg=kernelsu
+_pkg=kernelsu-next
 pkgname=${_pkg}-dkms
-pkgver=3.1.0+80+g489cb029
+pkgver=0.3261.g03e52117
 _ver=$pkgver
 pkgrel=1
 _branch=waydroid
-pkgdesc="A Kernel based root solution for Android. DKMS module for Container-based solutions such as Waydroid."
+pkgdesc="KernelSU-Next: an advanced kernel based root solution for Android. DKMS module for Container-based solutions such as Waydroid."
 arch=('any')
-url="https://github.com/supechicken/KernelSU"
-_upstream="https://github.com/tiann/$_pkg.git"
+# Fork con la rama 'waydroid' ya portada a KernelSU-Next
+url="https://github.com/Polaricito/KernelSU-Next-Waydroid"
+_upstream="https://github.com/KernelSU-Next/KernelSU-Next.git"
 license=('GPL-2.0-only')
 depends=('modloader' 'dkms')
 makedepends=('git')
@@ -119,7 +121,7 @@ chmod +x DLAGENTS
 export DLAGENTS="shallowclone::$(realpath "./DLAGENTS") %u %o"
 
 source=(
-  "${_pkg}::git+${url}#branch=waydroid"
+  "${_pkg}::git+${url}#branch=${_branch}"
   'Makefile'
   'dkms.conf'
   '00-kernelsu.conf'
@@ -136,31 +138,43 @@ sha256sums=(
 
 pkgver() {
   cd "$srcdir/$_pkg"
-  
+
+  # KernelSU-Next no versiona con tags semver "vX.Y.Z" como tiann/KernelSU
+  # (usa códigos de build tipo "12851"/"32925"), así que aquí ya NO tomamos
+  # prestados los tags de _upstream como hacía el PKGBUILD original.
+  # Solo desenchamos el shallow clone para tener historial completo y
+  # dejamos que git describe use lo que tu fork/rama traiga.
   {
-    if ! git remote add upstream "${_upstream}" 2>/dev/null; then
-      git remote set-url upstream "${_upstream}"
-    fi
-    git fetch --tags upstream v${_ver%%'+'*}
     git fetch --unshallow --no-tags origin "$_branch" || :
   } >/dev/null 2>&1
 
-  git describe --long --tags | sed 's#v##;s#-RC#.rc#;s#-#+#g'
+  local _described
+  _described=$(git describe --long --tags 2>/dev/null | sed 's#v##;s#-RC#.rc#;s#-#+#g')
+
+  if [ -n "$_described" ]; then
+    echo "$_described"
+  else
+    # Fallback si tu rama no trae tags anotados: 0.<count>.g<hash-corto>
+    echo "0.$(git rev-list --count HEAD).g$(git rev-parse --short HEAD)"
+  fi
 }
 
 package() {
-  local dest="$pkgdir/usr/src/kernelsu-${pkgver}"
+  local dest="$pkgdir/usr/src/${_pkg}-${pkgver}"
   mkdir -p "$dest"
 
   cd "$srcdir"
   cp -rpt "$dest" "${_pkg}/kernel/."
+  cp -rpt "$dest" "${_pkg}/uapi/."
 
   cd "$_pkg"
 
-  local _major _count _realver
+  local _major _count _realver _tag
   _major=${pkgver%%.*}
   _count=$(git rev-list --count HEAD 2>/dev/null)
   _realver=$((_major * 10000 + _count))
+  _tag=$(git describe --tags --abbrev=0 2>/dev/null)
+  [ -n "$_tag" ] || _tag=$pkgver
 
   local buildfile=kernel/Kbuild
   if [ ! -f "$buildfile" ]; then
@@ -171,7 +185,8 @@ package() {
   cd "$srcdir"
 
   sed "s|@PKGVER@|${pkgver}|g;\
-    s|@KSU_GIT_VERSION@|${_count}|g;" "$(readlink -f dkms.conf)" > "$dest/dkms.conf"
+    s|@KSU_GIT_VERSION@|${_count}|g;\
+    s|@KSU_GIT_TAG@|${_tag}|g;" "$(readlink -f dkms.conf)" > "$dest/dkms.conf"
 
   install -Dm644 "$(readlink -f Makefile)" "$dest/Makefile"
 
