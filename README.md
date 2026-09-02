@@ -22,6 +22,28 @@ sudo ./install.sh
 
 Both accept the same options (`--uninstall`, `--skip-seccomp`, `--kernel <ver>`).
 
+## Unstable updater (bleeding-edge)
+
+> **WARNING: EXPERIMENTAL.** This tracks the latest upstream KernelSU-Next `dev`
+> branch directly, re-applies the Waydroid adaptation on top, and rebuilds. It can
+> break. If a patch fails to apply, the script aborts and leaves your current module
+> untouched. Use only when you can't wait for the curated stable fork.
+
+```sh
+sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/Polaricito/KernelSU-Next-DKMS/master/installer.sh)" -- --unstable
+```
+
+Or run it directly from the repo:
+
+```sh
+sudo ./installer-update-unstable.sh
+```
+
+Same options (`--skip-seccomp`, `--kernel <ver>`) plus an interactive confirmation.
+
+To go back to the stable build at any time, just re-run the stable installer
+(`sudo ./install.sh`) — it reuses the curated Waydroid fork.
+
 ## Uninstall
 
 ```sh

@@ -2,9 +2,10 @@
 # KernelSU-Next one-line installer entry point.
 #
 # This is the bootstrap script invoked by the curl one-liner:
-#   curl -fsSL https://raw.githubusercontent.com/Polaricito/KernelSU-Next-DKMS/master/installer.sh | sudo bash
+#   curl -fsSL https://raw.githubusercontent.com/Polaricito/KernelSU-Next-DKMS/<branch>/installer.sh | sudo bash
+#   curl -fsSL ... | sudo bash -s -- --unstable        # bleeding-edge dev build
 #
-# It clones the KernelSU-Next-DKMS repo and defers to the real installer (install.sh).
+# It clones the KernelSU-Next-DKMS repo and defers to the real installer.
 
 set -euo pipefail
 
@@ -34,8 +35,26 @@ clone_repo() {
 }
 
 main() {
+    local unstable=0
+
+    for a in "$@"; do
+        if [ "$a" = "--unstable" ]; then
+            unstable=1
+        fi
+    done
+
     need_root "$@"
     clone_repo
+
+    if [ "${unstable}" -eq 1 ]; then
+        local script="${WORK_DIR}/installer-update-unstable.sh"
+        [ -f "$script" ] || die "unstable updater not found in repo"
+        chmod +x "$script"
+        echo ""
+        log "Starting KernelSU-Next UNSTABLE updater..."
+        exec "$script" "$@"
+    fi
+
     chmod +x "${WORK_DIR}/install.sh"
     echo ""
     log "Starting KernelSU-Next installer..."
