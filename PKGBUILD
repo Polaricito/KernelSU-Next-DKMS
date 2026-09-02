@@ -145,7 +145,7 @@ pkgver() {
   # Solo desenchamos el shallow clone para tener historial completo y
   # dejamos que git describe use lo que tu fork/rama traiga.
   {
-    git fetch --unshallow --no-tags origin "$_branch" || :
+    git fetch --unshallow origin "$_branch" || :
   } >/dev/null 2>&1
 
   local _described
@@ -174,7 +174,7 @@ package() {
   _count=$(git rev-list --count HEAD 2>/dev/null)
   _realver=$((_major * 10000 + _count))
   _tag=$(git describe --tags --abbrev=0 2>/dev/null)
-  [ -n "$_tag" ] || _tag=$pkgver
+  [ -n "$_tag" ] || _tag="v$_count"
 
   local buildfile=kernel/Kbuild
   if [ ! -f "$buildfile" ]; then
