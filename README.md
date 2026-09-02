@@ -134,12 +134,12 @@ The Manager app stages ksud on first launch. If it's missing, either:
 
 ```
 host Linux kernel                     Waydroid LXC container (x86_64 / Android)
-┌──────────────────────────┐          ┌──────────────────────────────────────────┐
-│ kernelsu.ko (DKMS, host) │          │ com.rifsxd.ksunext (Manager app)         │
-│   [ksu_driver] anon-inode│ ◄──fd─── │   │ (libsu root shell)                   │
-│   reboot() supercall kprobe ◄─────  │   ▼                                     │
-│   sucompat / allowlist  ◄────────── │ /data/adb/ksud  (staged by autoload)    │
-└──────────────────────────┘          └──────────────────────────────────────────┘
+┌────────────────────────────┐          ┌──────────────────────────────────────────┐
+│ kernelsu.ko (DKMS, host)   │          │ com.rifsxd.ksunext (Manager app)         │
+│   [ksu_driver] anon-inode  │◄──fd──── │   │ (libsu root shell)                   │
+│   reboot() supercall kprobe│◄──────── │   ▼                                      │
+│   sucompat / allowlist     │◄──────── │ /data/adb/ksud  (staged by autoload)     │
+└────────────────────────────┘          └──────────────────────────────────────────┘
 ```
 
 For detailed architecture notes, see [waydroid.md](waydroid.md).
