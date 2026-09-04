@@ -3,9 +3,18 @@
 # Makefile for the KernelSU DKMS module support (SUSFS / Waydroid shim variant).
 #
 # Builds the KernelSU-Next dev-susfs module against a host kernel that is NOT
-# patched with SUSFS. The KSU_SUSFS_WAYDROID_SHIM option compiles kernel/susfs_shim.c,
-# which provides inert stubs for the kernel-side SUSFS symbols so the module can
-# compile and load to deliver plain root. SUSFS hiding features are no-ops.
+# patched with SUSFS.
+#
+# CONFIG_KSU_SUSFS is kept OFF (n) so the proven non-SUSFS core is built: the
+# native syscall hook chain, reboot kprobe, fd-install and root-grant all work.
+# This is required because KernelSU's SUSFS build and its native hook_manager
+# are mutually exclusive by design, so building with CONFIG_KSU_SUSFS=y never
+# installs the [ksu_driver] fd and ksud cannot connect.
+#
+# CONFIG_KSU_SUSFS_WAYDROID_SHIM=y compiles kernel/susfs_shim.c, which provides
+# inert stubs for the kernel-side SUSFS symbols (and no-op SUSFS supercall
+# commands), so the module loads and delivers plain root. All SUSFS hiding /
+# spoofing features are no-ops on the un-patched host kernel.
 #
 
 export CONFIG_KSU := m
@@ -15,7 +24,7 @@ export CONFIG_KSU_DEBUG := n
 export CONFIG_KSU_HANDLE_INPUT_EVENTS := n
 export CONFIG_KSU_X86_PATCH_SYSCALL_DISPATCHER := y
 
-export CONFIG_KSU_SUSFS := y
+export CONFIG_KSU_SUSFS := n
 export CONFIG_KSU_SUSFS_SUS_PATH := y
 export CONFIG_KSU_SUSFS_SUS_MOUNT := y
 export CONFIG_KSU_SUSFS_SUS_KSTAT := y

@@ -50,9 +50,11 @@ Builds the KernelSU-Next **dev-susfs** module (from the `susfs-waydroid` branch)
 host kernel that is **not** SUSFS-patched (e.g. stock CachyOS). A compile/load shim
 (`kernel/susfs_shim.c`) provides inert stubs for the kernel-side SUSFS symbols.
 
-> **NOTE:** Because the host kernel has no SUSFS patch and no SELinux, the module
-> delivers **plain root only**. All SUSFS hiding features (sus_path mounts, kstat,
-> uname/avc-log spoofing, etc.) are **no-ops / inert**. Sensor might detect root.
+> **NOTE:** Because the host kernel has no SUSFS patch and no SELinux, this variant
+> keeps `CONFIG_KSU_SUSFS` off so the **native hook chain, fd-install and root grant
+> all work normally**, and only adds SUSFS as an inert layer. The module delivers
+> **plain root**; all SUSFS hiding features (sus_path mounts, kstat, uname/avc-log
+> spoofing, etc.) are **no-ops / inert**. Sensor might detect root.
 
 ```sh
 # One-line (curl):
