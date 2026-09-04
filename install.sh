@@ -11,6 +11,7 @@ CLONE_DIR="/tmp/kernelsu-next-build"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 UNINSTALL=0
 SKIP_SECCOMP=0
+SUSFS=0
 TARGET_KERNEL=""
 
 usage() {
@@ -22,11 +23,13 @@ Usage: sudo ./install.sh [OPTIONS]
 Options:
   --uninstall        Remove KernelSU and restore original state
   --skip-seccomp     Do not modify Waydroid seccomp profiles
+  --susfs            Build the SUSFS variant (dev-susfs branch) with loadable shim
   --kernel <ver>     Target kernel version (default: uname -r)
   -h, --help         Show this help
 
 Examples:
   sudo ./install.sh                     # Install for running kernel
+  sudo ./install.sh --susfs             # Install SUSFS variant (inert features)
   sudo ./install.sh --kernel 6.18.42-1-cachyos-lts  # Install for specific kernel
   sudo ./install.sh --uninstall         # Remove everything
 EOF
@@ -98,12 +101,17 @@ compute_version() {
 
 install_sources() {
     local INSTALL_DIR="${SRC_DIR}-${PKGVER}"
+    local MAKE_FILE="Makefile"
     log "Installing kernel sources to ${INSTALL_DIR}..."
     mkdir -p "${INSTALL_DIR}"
 
     cp -r "${CLONE_DIR}/kernel/"* "${INSTALL_DIR}/"
     cp -r "${CLONE_DIR}/uapi/"* "${INSTALL_DIR}/" 2>/dev/null || true
-    install -Dm644 "${SCRIPT_DIR}/Makefile" "${INSTALL_DIR}/Makefile"
+    if [ "${SUSFS}" -eq 1 ]; then
+        MAKE_FILE="Makefile.susfs"
+        log "Using SUSFS build configuration (${MAKE_FILE})."
+    fi
+    install -Dm644 "${SCRIPT_DIR}/${MAKE_FILE}" "${INSTALL_DIR}/Makefile"
 
     sed "s|@PKGVER@|${PKGVER}|g;
          s|@KSU_GIT_VERSION@|${KSU_COUNT}|g;
@@ -220,6 +228,7 @@ main() {
         case $1 in
             --uninstall)    UNINSTALL=1 ;;
             --skip-seccomp) SKIP_SECCOMP=1 ;;
+            --susfs)        SUSFS=1 ;;
             --kernel)       shift; TARGET_KERNEL="${1:-}" ;;
             -h|--help)      usage; exit 0 ;;
             *)              die "Unknown option: $1" ;;
@@ -228,6 +237,11 @@ main() {
     done
 
     [ -z "${TARGET_KERNEL}" ] && TARGET_KERNEL=$(uname -r)
+
+    if [ "${SUSFS}" -eq 1 ]; then
+        BRANCH="susfs-waydroid"
+        log "SUSFS variant selected (branch: ${BRANCH})."
+    fi
 
     need_root "$@"
 
@@ -250,6 +264,7 @@ main() {
 
     echo ""
     log "=== KernelSU-Next installed successfully ==="
+    [ "${SUSFS}" -eq 1 ] && log "Variant:       SUSFS (loadable shim, features inert)"
     log "Kernel version: ${TARGET_KERNEL}"
     log "KSU_VERSION:    $((30000 + KSU_COUNT))"
     log "Tag:            ${KSU_TAG}"

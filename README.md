@@ -44,6 +44,29 @@ Same options (`--skip-seccomp`, `--kernel <ver>`) plus an interactive confirmati
 To go back to the stable build at any time, just re-run the stable installer
 (`sudo ./install.sh`) — it reuses the curated Waydroid fork.
 
+## SUSFS variant
+
+Builds the KernelSU-Next **dev-susfs** module (from the `susfs-waydroid` branch) against a
+host kernel that is **not** SUSFS-patched (e.g. stock CachyOS). A compile/load shim
+(`kernel/susfs_shim.c`) provides inert stubs for the kernel-side SUSFS symbols.
+
+> **NOTE:** Because the host kernel has no SUSFS patch and no SELinux, the module
+> delivers **plain root only**. All SUSFS hiding features (sus_path mounts, kstat,
+> uname/avc-log spoofing, etc.) are **no-ops / inert**. Sensor might detect root.
+
+```sh
+# One-line (curl):
+sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/Polaricito/KernelSU-Next-DKMS/master/installer.sh)" -- --susfs
+
+# Or from a checkout:
+sudo ./install.sh --susfs
+```
+
+To switch back to the standard (non-SUSFS) build, re-run without `--susfs`; the installer
+replaces the DKMS source and reinstalls that variant.
+
+Accepted options: same as stable (`--skip-seccomp`, `--kernel <ver>`).
+
 ## Uninstall
 
 ```sh

@@ -1,0 +1,36 @@
+# SPDX-License-Identifier: GPL-2.0
+#
+# Makefile for the KernelSU DKMS module support (SUSFS / Waydroid shim variant).
+#
+# Builds the KernelSU-Next dev-susfs module against a host kernel that is NOT
+# patched with SUSFS. The KSU_SUSFS_WAYDROID_SHIM option compiles kernel/susfs_shim.c,
+# which provides inert stubs for the kernel-side SUSFS symbols so the module can
+# compile and load to deliver plain root. SUSFS hiding features are no-ops.
+#
+
+export CONFIG_KSU := m
+export CONFIG_KSU_NON_ANDROID := y
+export CONFIG_KSU_SELINUX := n
+export CONFIG_KSU_DEBUG := n
+export CONFIG_KSU_HANDLE_INPUT_EVENTS := n
+export CONFIG_KSU_X86_PATCH_SYSCALL_DISPATCHER := y
+
+export CONFIG_KSU_SUSFS := y
+export CONFIG_KSU_SUSFS_SUS_PATH := y
+export CONFIG_KSU_SUSFS_SUS_MOUNT := y
+export CONFIG_KSU_SUSFS_SUS_KSTAT := y
+export CONFIG_KSU_SUSFS_SPOOF_UNAME := y
+export CONFIG_KSU_SUSFS_ENABLE_LOG := y
+export CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG := y
+export CONFIG_KSU_SUSFS_OPEN_REDIRECT := y
+export CONFIG_KSU_SUSFS_SUS_MAP := y
+export CONFIG_KSU_SUSFS_WAYDROID_SHIM := y
+export CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS := n
+
+KDIR ?= /lib/modules/$(KVERSION)/build
+
+all:
+	make -C $(KDIR) M=$(PWD) modules
+
+clean:
+	make -C $(KDIR) M=$(PWD) clean
