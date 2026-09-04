@@ -4,8 +4,10 @@
 # This is the bootstrap script invoked by the curl one-liner:
 #   curl -fsSL https://raw.githubusercontent.com/Polaricito/KernelSU-Next-DKMS/<branch>/installer.sh | sudo bash
 #   curl -fsSL ... | sudo bash -s -- --unstable        # bleeding-edge dev build
+#   curl -fsSL ... | sudo bash -s -- --susfs           # SUSFS variant (loadable shim, features inert)
 #
-# It clones the KernelSU-Next-DKMS repo and defers to the real installer.
+# It clones the KernelSU-Next-DKMS repo and defers to the real installer,
+# forwarding all arguments (e.g. --susfs, --skip-seccomp, --kernel <ver>).
 
 set -euo pipefail
 
