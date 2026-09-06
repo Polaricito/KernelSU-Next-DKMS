@@ -212,20 +212,35 @@ h3.sub { margin: 2rem 0 0.5rem; font-size: 1.05rem; }
   gap: 1rem;
   margin: 1.5rem 0;
 }
-.diagram pre {
+.dbox {
   flex: 1 1 0;
   min-width: 0;
-  overflow-x: auto;
-  margin: 0;
-  color: var(--text);
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 0.75rem 1rem;
+  overflow: hidden;
+  color: var(--text);
+}
+.dbox-title {
+  margin: 0;
+  padding: 0.55rem 1rem;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
   font-family: var(--mono);
   font-size: 0.8rem;
-  line-height: 1.5;
+  font-weight: 600;
 }
+.dbox-list {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  list-style: none;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.dbox-list li { padding: 0.05rem 0; color: var(--muted); }
+.dbox-list li code { font-family: var(--mono); color: var(--text); }
+.tree { color: var(--dim); }
 .diagram-arrow {
   flex: 0 0 auto;
   font-size: 1.4rem;
@@ -304,13 +319,7 @@ footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
   nav a { font-size: 0.9rem; }
   .lang { font-size: 0.85rem; }
   .diagram { flex-direction: column; align-items: stretch; }
-  .diagram pre {
-    flex: none;
-    width: max-content;
-    max-width: 100%;
-    margin: 0 auto;
-    font-size: 0.75rem;
-  }
+  .dbox { flex: none; }
   .diagram-arrow { transform: rotate(90deg); }
   .grid { grid-template-columns: 1fr; }
 }

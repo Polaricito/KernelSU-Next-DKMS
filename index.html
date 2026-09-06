@@ -7,7 +7,7 @@
 <meta name="description" content="KernelSU-Next as a loadable kernel module (DKMS) for running root inside Waydroid on CachyOS and other x86_64 Linux hosts.">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="logo.png">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -79,25 +79,25 @@
     </div>
 
     <div class="diagram">
-      <pre>
- host Linux kernel (x86_64)
- ┌────────────────────────────┐
- │ kernelsu.ko (DKMS, host)   │
- │   [ksu_driver] anon-inode  │
- │   ksu_driver fd + reboot() │
- │   sucompat / allowlist     │
- └────────────────────────────┘
-      </pre>
+      <div class="dbox">
+        <div class="dbox-title">host Linux kernel (x86_64)</div>
+        <ul class="dbox-list">
+          <li><code>kernelsu.ko</code> (DKMS, host)</li>
+          <li><code>[ksu_driver]</code> anon-inode</li>
+          <li><code>ksu_driver</code> fd + <code>reboot()</code></li>
+          <li><code>sucompat</code> / allowlist</li>
+        </ul>
+      </div>
       <div class="diagram-arrow">⇅</div>
-      <pre>
- Waydroid LXC container (Android)
- ┌─────────────────────────────────────┐
- │ com.rifsxd.ksunext (Manager app)    │
- │  │ (libsu root shell)               │
- │  ▼                                  │
- │ /data/adb/ksud (staged by autoload) │
- └─────────────────────────────────────┘
-      </pre>
+      <div class="dbox">
+        <div class="dbox-title">Waydroid LXC container (Android)</div>
+        <ul class="dbox-list">
+          <li><code>com.rifsxd.ksunext</code> &mdash; Manager app</li>
+          <li><span class="tree">&#9474; (libsu root shell)</span></li>
+          <li><span class="tree">&#9660;</span></li>
+          <li><code>/data/adb/ksud</code> (staged by autoload)</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
