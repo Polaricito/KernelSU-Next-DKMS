@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KernelSU-Next DKMS — Una solución de root basada en kernel para Waydroid</title>
+<meta name="description" content="KernelSU-Next como módulo kernel cargable (DKMS) para ejecutar root dentro de Waydroid en CachyOS y otros hosts Linux x86_64.">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="stylesheet" href="style.css?v=3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a class="brand" href="#top">
+      <img class="logo" src="logo.png" alt="KernelSU">
+      <span class="brand-name">KernelSU-Next</span>
+    </a>
+    <nav>
+      <a href="#install">Guía</a>
+      <a href="https://github.com/Polaricito/KernelSU-Next-DKMS" aria-label="GitHub">
+        <svg class="gh-icon" viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+        </svg>
+      </a>
+      <select class="lang" onchange="location.href = this.value" aria-label="Idioma">
+        <option value="index.html">English</option>
+        <option value="index.es.html" selected>Español</option>
+      </select>
+    </nav>
+  </div>
+</header>
+
+<section id="top" class="hero">
+  <div class="wrap hero-inner">
+    <h1>Una solución de root basada en kernel para Waydroid</h1>
+    <p class="lead">
+      KernelSU-Next empaquetado como módulo kernel cargable y compilado con DKMS —
+      root dentro de Waydroid en kernels CachyOS estándar, sin kernel personalizado.
+    </p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#install">Empezar</a>
+      <a class="btn btn-secondary" href="https://github.com/Polaricito/KernelSU-Next-DKMS">Ver en GitHub</a>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="section alt">
+  <div class="wrap">
+    <h2>Módulo kernel, no un parche de kernel</h2>
+    <p class="section-intro">
+      KernelSU-Next se distribuye como un módulo cargable compilado con DKMS contra tu
+      kernel en uso — sin kernel personalizado, sin SUSFS, nada que mantener entre actualizaciones.
+    </p>
+    <div class="grid">
+      <div class="card">
+        <h3>Compila con DKMS</h3>
+        <p><code>kernelsu.ko</code> se compila contra las cabeceras de <code>$(uname -r)</code> y se recompila automáticamente con cada actualización del kernel.</p>
+      </div>
+      <div class="card">
+        <h3>Carga en kernels estándar</h3>
+        <p>Se carga mediante <code>modloader</code> en lugar de modprobe, que no puede resolver los símbolos de espacios de nombres PID que el módulo necesita.</p>
+      </div>
+      <div class="card">
+        <h3>Control de acceso root</h3>
+        <p>Solo las apps permitidas ven <code>su</code>. La app Manager (<code>com.rifsxd.ksunext</code>) concede y gestiona el root.</p>
+      </div>
+      <div class="card">
+        <h3>Carga y preparación automáticas</h3>
+        <p>Los servicios systemd cargan el módulo al arrancar y preparan su/ksud dentro del contenedor Waydroid para que las apps tengan un <code>su</code> funcional.</p>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <pre>
+ host Linux (x86_64)
+ ┌────────────────────────────┐
+ │ kernelsu.ko (DKMS, host)   │
+ │   [ksu_driver] anon-inode  │
+ │   ksu_driver fd + reboot() │
+ │   sucompat / allowlist     │
+ └────────────────────────────┘
+      </pre>
+      <div class="diagram-arrow">⇅</div>
+      <pre>
+ Contenedor Waydroid (Android)
+ ┌─────────────────────────────────────┐
+ │ com.rifsxd.ksunext (Manager app)    │
+ │  │ (libsu root shell)               │
+ │  ▼                                  │
+ │ /data/adb/ksud (preparado al arrancar)│
+ └─────────────────────────────────────┘
+      </pre>
+    </div>
+  </div>
+</section>
+
+<section id="install" class="section">
+  <div class="wrap">
+    <h2>Instalación</h2>
+
+    <h3 class="sub">Instalación rápida (una línea)</h3>
+    <pre class="code"><code>curl -fsSL https://raw.githubusercontent.com/Polaricito/KernelSU-Next-DKMS/master/installer.sh | sudo bash</code></pre>
+
+    <h3 class="sub">Desde un clon del repositorio</h3>
+    <pre class="code"><code>git clone https://github.com/Polaricito/KernelSU-Next-DKMS.git
+cd KernelSU-Next-DKMS
+sudo ./install.sh</code></pre>
+
+    <h3 class="sub">Opciones</h3>
+    <table>
+      <tr><th>Flag</th><th>Efecto</th></tr>
+      <tr><td><code>--kernel &lt;ver&gt;</code></td><td>Apuntar a una versión específica del kernel (por defecto: <code>uname -r</code>)</td></tr>
+      <tr><td><code>--skip-seccomp</code></td><td>No modificar los perfiles seccomp de Waydroid</td></tr>
+      <tr><td><code>--uninstall</code></td><td>Eliminar KernelSU y restaurar el estado original</td></tr>
+    </table>
+
+    <div class="note">
+      <strong>Después de instalar:</strong> inicia una sesión con <code>waydroid session start</code> e instala la
+      app Manager <code>com.rifsxd.ksunext</code> para conceder root y gestionar módulos.
+    </div>
+  </div>
+</section>
+
+<section id="uninstall" class="section alt">
+  <div class="wrap">
+    <h2>Desinstalación</h2>
+
+    <h3 class="sub">Una línea</h3>
+    <pre class="code"><code>curl -fsSL https://raw.githubusercontent.com/Polaricito/KernelSU-Next-DKMS/master/uninstaller.sh | sudo bash</code></pre>
+
+    <h3 class="sub">Desde un clon del repositorio</h3>
+    <pre class="code"><code>sudo ./install.sh --uninstall</code></pre>
+
+    <p>Esto descarga el módulo, lo elimina de DKMS y borra todos los archivos y servicios instalados. Tus kernels quedan intactos.</p>
+  </div>
+</section>
+
+<section id="faq" class="section">
+  <div class="wrap">
+    <h2>Preguntas frecuentes</h2>
+
+    <details>
+      <summary>¿Necesito un kernel personalizado?</summary>
+      <p>No. Se compila como módulo contra tu kernel estándar (CachyOS stable o LTS funcionan bien).</p>
+    </details>
+
+    <details>
+      <summary>¿Por qué no <code>modprobe kernelsu</code>?</summary>
+      <p>modprobe falla con <code>Unknown symbol change_pid</code>, porque el módulo necesita símbolos de espacios de nombres PID que modprobe no puede resolver fuera de Android. <code>load-kernelsu</code> usa <code>modloader</code> y lo resuelve.</p>
+    </details>
+
+    <details>
+      <summary>Se instala al arrancar, ¿también se descarga?</summary>
+      <p><code>kernelsu-autload.service</code> carga el módulo al arrancar. Desinstalar elimina el servicio para que deje de cargarse automáticamente.</p>
+    </details>
+
+    <details>
+      <summary>Números de versión / <code>v0.0.1</code></summary>
+      <p>El módulo informa <code>KSU_VERSION = 30000 + commits</code>. Si el Manager muestra una versión muy baja, asegúrate de que DKMS recibió <code>KSU_GIT_VERSION</code> y <code>KSU_GIT_TAG</code> (el instalador lo hace automáticamente).</p>
+    </details>
+
+    <details>
+      <summary>¿Dónde está SUSFS?</summary>
+      <p>Eliminado. Esto es KernelSU-Next deliberadamente vanilla para un root estable y simple en kernels sin parchear.</p>
+    </details>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>KernelSU-Next DKMS</span>
+    <a href="https://github.com/Polaricito/KernelSU-Next-DKMS">GitHub</a>
+    <span class="dim">Sirviendo desde la rama <code>gh-pages</code> de este repositorio.</span>
+  </div>
+</footer>
+
+</body>
+</html>
