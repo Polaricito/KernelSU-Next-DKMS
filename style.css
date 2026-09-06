@@ -323,3 +323,22 @@ footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
   .diagram-arrow { transform: rotate(90deg); }
   .grid { grid-template-columns: 1fr; }
 }
+
+/* Submenu animations */
+.menu .submenu {
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease, visibility 0.4s ease;
+  list-style: none;
+  position: absolute;
+  background: #fff;
+}
+
+/* Show submenu at hover */
+.menu li:hover .submenu {
+  max-height: 200px;
+  opacity: 1;
+  visibility: visible;
+}
