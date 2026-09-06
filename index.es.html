@@ -7,7 +7,7 @@
 <meta name="description" content="KernelSU-Next como módulo kernel cargable (DKMS) para ejecutar root dentro de Waydroid en CachyOS y otros hosts Linux x86_64.">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="logo.png">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -60,19 +60,19 @@
       kernel en uso — sin kernel personalizado, sin SUSFS, nada que mantener entre actualizaciones.
     </p>
     <div class="grid">
-      <div class="card">
+      <div class="card reveal">
         <h3>Compila con DKMS</h3>
         <p><code>kernelsu.ko</code> se compila contra las cabeceras de <code>$(uname -r)</code> y se recompila automáticamente con cada actualización del kernel.</p>
       </div>
-      <div class="card">
+      <div class="card reveal">
         <h3>Carga en kernels estándar</h3>
         <p>Se carga mediante <code>modloader</code> en lugar de modprobe, que no puede resolver los símbolos del PID-namespace que el módulo necesita.</p>
       </div>
-      <div class="card">
+      <div class="card reveal">
         <h3>Control de acceso root</h3>
         <p>Solo las apps permitidas ven <code>su</code>. La app Manager (<code>com.rifsxd.ksunext</code>) concede y gestiona el root.</p>
       </div>
-      <div class="card">
+      <div class="card reveal">
         <h3>Carga y preparación automáticas</h3>
         <p>Los servicios systemd cargan el módulo al arrancar y preparan su/ksud dentro del contenedor Waydroid para que las apps tengan un <code>su</code> funcional.</p>
       </div>
@@ -147,32 +147,32 @@ sudo ./install.sh</code></pre>
   <div class="wrap">
     <h2>Preguntas frecuentes</h2>
 
-    <details>
+    <details class="reveal">
       <summary>¿Qué kernels son compatibles?</summary>
       <p>Solo 6.x. KernelSU-Next upstream lista 6.6 como el kernel máximo soportado oficialmente, pero esta compilación DKMS está probada en versiones 6.x más nuevas (6.18), así que el límite no se aplica aquí.</p>
     </details>
 
-    <details>
+    <details class="reveal">
       <summary>¿Necesito un kernel personalizado?</summary>
       <p>No. Se compila como módulo contra tu kernel estándar (CachyOS stable o LTS funcionan bien).</p>
     </details>
 
-    <details>
+    <details class="reveal">
       <summary>¿Por qué no <code>modprobe kernelsu</code>?</summary>
       <p>modprobe falla con <code>Unknown symbol change_pid</code>, porque el módulo necesita símbolos de espacios de nombres PID que modprobe no puede resolver fuera de Android. <code>load-kernelsu</code> usa <code>modloader</code> y lo resuelve.</p>
     </details>
 
-    <details>
+    <details class="reveal">
       <summary>Se instala al arrancar, ¿también se descarga?</summary>
       <p><code>kernelsu-autload.service</code> carga el módulo al arrancar. Desinstalar elimina el servicio para que deje de cargarse automáticamente.</p>
     </details>
 
-    <details>
+    <details class="reveal">
       <summary>Números de versión / <code>v0.0.1</code></summary>
       <p>El módulo informa <code>KSU_VERSION = 30000 + commits</code>. Si el Manager muestra una versión muy baja, asegúrate de que DKMS recibió <code>KSU_GIT_VERSION</code> y <code>KSU_GIT_TAG</code> (el instalador lo hace automáticamente).</p>
     </details>
 
-    <details>
+    <details class="reveal">
       <summary>¿Dónde está SUSFS?</summary>
       <p>Eliminado. Esto es KernelSU-Next deliberadamente vanilla para un root estable y simple en kernels sin parchear.</p>
     </details>
@@ -186,6 +186,26 @@ sudo ./install.sh</code></pre>
     <span class="dim">Sirviendo desde la rama <code>gh-pages</code> de este repositorio.</span>
   </div>
 </footer>
+
+<script>
+(function () {
+  document.documentElement.classList.add('js');
+  var els = document.querySelectorAll('.reveal, .dbox-list li');
+  if (!('IntersectionObserver' in window)) {
+    Array.prototype.forEach.call(els, function (el) { el.classList.add('show'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('show');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  Array.prototype.forEach.call(els, function (el) { io.observe(el); });
+})();
+</script>
 
 </body>
 </html>

@@ -7,7 +7,7 @@
 <meta name="description" content="KernelSU-Next as a loadable kernel module (DKMS) for running root inside Waydroid on CachyOS and other x86_64 Linux hosts.">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="logo.png">
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -60,19 +60,19 @@
       kernel — no custom kernel, no SUSFS, nothing to maintain across updates.
     </p>
     <div class="grid">
-      <div class="card">
+      <div class="card reveal">
         <h3>Build with DKMS</h3>
         <p><code>kernelsu.ko</code> compiles against <code>$(uname -r)</code> headers and auto-rebuilds on every kernel update.</p>
       </div>
-      <div class="card">
+      <div class="card reveal">
         <h3>Loads on stock kernels</h3>
         <p>Loaded via <code>modloader</code> instead of modprobe, which can't resolve the PID-namespace symbols the module needs.</p>
       </div>
-      <div class="card">
+      <div class="card reveal">
         <h3>Root access control</h3>
         <p>Only permitted apps see <code>su</code>. The Manager app (<code>com.rifsxd.ksunext</code>) grants and manages root.</p>
       </div>
-      <div class="card">
+      <div class="card reveal">
         <h3>Auto-load &amp; stage</h3>
         <p>systemd services load the module at boot and stage su/ksud into the Waydroid container so apps get a working <code>su</code>.</p>
       </div>
@@ -147,32 +147,32 @@ sudo ./install.sh</code></pre>
   <div class="wrap">
     <h2>FAQ</h2>
 
-    <details>
+    <details class="reveal">
       <summary>Which kernels are supported?</summary>
       <p>Only 6.x. Upstream KernelSU-Next lists 6.6 as the highest officially supported kernel, but this DKMS build is tested on newer 6.x releases (6.18), so the limit isn't enforced here.</p>
     </details>
 
-    <details>
+    <details class="reveal">
       <summary>Do I need a custom kernel?</summary>
       <p>No. It builds as a module against your stock kernel (CachyOS stable or LTS work fine).</p>
     </details>
 
-    <details>
+    <details class="reveal">
       <summary>Why not <code>modprobe kernelsu</code>?</summary>
       <p>Plain modprobe fails with <code>Unknown symbol change_pid</code>, because the module needs PID-namespace symbols that modprobe can't resolve outside Android. <code>load-kernelsu</code> uses <code>modloader</code> and handles that.</p>
     </details>
 
-    <details>
+    <details class="reveal">
       <summary>It installs during boot, does it also unload?</summary>
       <p><code>kernelsu-autload.service</code> loads the module at boot. Uninstalling removes the service so it stops auto-loading.</p>
     </details>
 
-    <details>
+    <details class="reveal">
       <summary>Version numbers / <code>v0.0.1</code></summary>
       <p>The module reports <code>KSU_VERSION = 30000 + commits</code>. If the Manager shows a too-low version, ensure DKMS received <code>KSU_GIT_VERSION</code> and <code>KSU_GIT_TAG</code> (the installer does this automatically).</p>
     </details>
 
-    <details>
+    <details class="reveal">
       <summary>Where is SUSFS?</summary>
       <p>Removed. This is deliberately vanilla KernelSU-Next for stable, plain root on unpatched kernels.</p>
     </details>
@@ -186,6 +186,26 @@ sudo ./install.sh</code></pre>
     <span class="dim">Serving from the <code>gh-pages</code> branch of this repo.</span>
   </div>
 </footer>
+
+<script>
+(function () {
+  document.documentElement.classList.add('js');
+  var els = document.querySelectorAll('.reveal, .dbox-list li');
+  if (!('IntersectionObserver' in window)) {
+    Array.prototype.forEach.call(els, function (el) { el.classList.add('show'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('show');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  Array.prototype.forEach.call(els, function (el) { io.observe(el); });
+})();
+</script>
 
 </body>
 </html>
