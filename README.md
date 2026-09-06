@@ -47,6 +47,12 @@ To go back to the stable build at any time, just re-run the stable installer
 ## Uninstall
 
 ```sh
+curl -fsSL https://raw.githubusercontent.com/Polaricito/KernelSU-Next-DKMS/master/uninstaller.sh | sudo bash
+```
+
+Or from a checkout:
+
+```sh
 sudo ./install.sh --uninstall
 ```
 
