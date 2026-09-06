@@ -7,7 +7,7 @@
 <meta name="description" content="KernelSU-Next como módulo kernel cargable (DKMS) para ejecutar root dentro de Waydroid en CachyOS y otros hosts Linux x86_64.">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="logo.png">
-<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="style.css?v=10">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -233,19 +233,19 @@ sudo ./install.sh</code></pre>
 
   all.forEach(function (d) {
     d.querySelector('summary').addEventListener('click', function (e) {
+      e.preventDefault();
       if (d.open) {
-        e.preventDefault();
         d.classList.remove('js-open');
         animClose(d, function () { d.removeAttribute('open'); });
       } else {
-        e.preventDefault();
-        d.classList.add('js-open');
         all.forEach(function (o) {
           if (o !== d && o.open) {
             o.classList.remove('js-open');
             animClose(o, function () { o.removeAttribute('open'); });
           }
         });
+        d.setAttribute('open', '');
+        d.classList.add('js-open');
         animOpen(d);
       }
     });
