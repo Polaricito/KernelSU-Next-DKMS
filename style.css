@@ -302,34 +302,35 @@ details {
   padding: 0.9rem 1.1rem;
   margin: 0.6rem 0;
   background: var(--bg);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, opacity 0.5s ease, transform 0.5s ease;
+  display: grid;
+  grid-template-rows: auto 0fr;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, opacity 0.5s ease, transform 0.5s ease, grid-template-rows 0.3s ease;
 }
 details:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); }
-details[open] { border-color: var(--accent-border); }
+details[open] {
+  border-color: var(--accent-border);
+  grid-template-rows: auto 1fr;
+}
+details > p { overflow: hidden; }
 summary {
   cursor: pointer;
   font-weight: 600;
   color: var(--text);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
 }
 summary::-webkit-details-marker { display: none; }
 summary::after {
   content: "\25BE";
   flex: 0 0 auto;
+  margin-left: auto;
+  padding-left: 1rem;
   color: var(--dim);
   transition: transform 0.25s ease;
 }
 details[open] summary::after { transform: rotate(180deg); }
-details[open] p { animation: fadeUp 0.35s ease; }
 details p { margin: 0.75rem 0 0; color: var(--muted); }
 details code { background: var(--bg-alt); padding: 0.1rem 0.3rem; border-radius: 4px; font-size: 0.85em; }
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: none; }
-}
 
 /* Footer */
 footer {
@@ -346,7 +347,7 @@ footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
 .js .reveal {
   opacity: 0;
   transform: translateY(18px);
-  transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.25s ease, box-shadow 0.25s ease, grid-template-rows 0.3s ease;
 }
 .js .dbox-list li {
   opacity: 0;
