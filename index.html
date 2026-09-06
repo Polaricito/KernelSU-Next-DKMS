@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KernelSU-Next DKMS — KernelSU for x86_64 Waydroid</title>
+<meta name="description" content="KernelSU-Next as a loadable kernel module (DKMS) for running root inside Waydroid on CachyOS and other x86_64 Linux hosts.">
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a class="brand" href="#top">
+      <span class="logo">KSU</span>
+      <span class="brand-name">KernelSU-Next&nbsp;·&nbsp;DKMS</span>
+    </a>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#install">Install</a>
+      <a href="#uninstall">Uninstall</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </div>
+</header>
+
+<section id="top" class="hero">
+  <div class="wrap">
+    <h1>Run root inside Waydroid on stock&nbsp;kernels.</h1>
+    <p class="lead">
+      KernelSU-Next packaged as a <strong>loadable kernel module</strong> and built with
+      <strong>DKMS</strong> — no custom kernel, no SUSFS, no patching. Works on
+      CachyOS stable, LTS, and any kernel you already run.
+    </p>
+    <div class="cta">
+      <pre class="code"><code>curl -fsSL https://raw.githubusercontent.com/Polaricito/KernelSU-Next-DKMS/master/installer.sh | sudo bash</code></pre>
+    </div>
+    <div class="badges">
+      <span class="badge">x86_64</span>
+      <span class="badge">DKMS · auto-rebuilds</span>
+      <span class="badge">modloader</span>
+      <span class="badge">Manager: com.rifsxd.ksunext</span>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="section alt">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <p>
+      Instead of compiling KernelSU-Next into a kernel, this project ships it as a
+      <strong>.ko module</strong> that is built against your <em>running</em> kernel with
+      DKMS and auto-rebuilt whenever the kernel updates.
+    </p>
+    <div class="grid">
+      <div class="card">
+        <h3>1 · Build</h3>
+        <p>DKMS compiles <code>kernelsu.ko</code> against <code>$(uname -r)</code> headers, passing the current git commit count as the version.</p>
+      </div>
+      <div class="card">
+        <h3>2 · Load</h3>
+        <p>Loaded with <code>load-kernelsu</code> (via <code>modloader</code>), which resolves the PID-namespace symbols that plain <code>modprobe</code> can't on non-Android kernels.</p>
+      </div>
+      <div class="card">
+        <h3>3 · Grant</h3>
+        <p>The <code>ksu_driver</code> anon-inode and supercall allow the Manager app (<code>com.rifsxd.ksunext</code>) to grant root inside the Waydroid container.</p>
+      </div>
+      <div class="card">
+        <h3>4 · Stage &amp; serve</h3>
+        <p>systemd services auto-load the module at boot and stage the su/ksud binaries into the container so apps get a working <code>su</code>.</p>
+      </div>
+    </div>
+
+    <div class="diagram">
+<pre>
+host Linux kernel                      Waydroid LXC container (x86_64 / Android)
+┌────────────────────────────┐         ┌────────────────────────────────────────────┐
+│ kernelsu.ko (DKMS, host)   │         │ com.rifsxd.ksunext (Manager app)           │
+│   [ksu_driver] anon-inode  │◄──fd─── │   │ (libsu root shell)                     │
+│   reboot() supercall       │◄──────── │   ▼                                       │
+│   sucompat / allowlist     │◄──────── │ /data/adb/ksud (staged by autoload)       │
+└────────────────────────────┘         └────────────────────────────────────────────┘
+</pre>
+    </div>
+  </div>
+</section>
+
+<section id="install" class="section">
+  <div class="wrap">
+    <h2>Install</h2>
+
+    <h3 class="sub">Quick install (one-liner)</h3>
+    <pre class="code"><code>curl -fsSL https://raw.githubusercontent.com/Polaricito/KernelSU-Next-DKMS/master/installer.sh | sudo bash</code></pre>
+
+    <h3 class="sub">From a checkout</h3>
+    <pre class="code"><code>git clone https://github.com/Polaricito/KernelSU-Next-DKMS.git
+cd KernelSU-Next-DKMS
+sudo ./install.sh</code></pre>
+
+    <h3 class="sub">Options</h3>
+    <table>
+      <tr><th>Flag</th><th>Effect</th></tr>
+      <tr><td><code>--kernel &lt;ver&gt;</code></td><td>Target a specific kernel version (default: <code>uname -r</code>)</td></tr>
+      <tr><td><code>--skip-seccomp</code></td><td>Don't modify the Waydroid seccomp profiles</td></tr>
+      <tr><td><code>--uninstall</code></td><td>Remove KernelSU and restore the original state</td></tr>
+    </table>
+
+    <div class="note">
+      <strong>After installing:</strong> start a session with <code>waydroid session start</code> and install the
+      Manager app <code>com.rifsxd.ksunext</code> to grant root and manage modules.
+    </div>
+  </div>
+</section>
+
+<section id="uninstall" class="section alt">
+  <div class="wrap">
+    <h2>Uninstall</h2>
+
+    <h3 class="sub">One-liner</h3>
+    <pre class="code"><code>curl -fsSL https://raw.githubusercontent.com/Polaricito/KernelSU-Next-DKMS/master/uninstaller.sh | sudo bash</code></pre>
+
+    <h3 class="sub">From a checkout</h3>
+    <pre class="code"><code>sudo ./install.sh --uninstall</code></pre>
+
+    <p>This unloads the module, removes it from DKMS, and deletes all installed files and services. Your kernels are left untouched.</p>
+  </div>
+</section>
+
+<section id="faq" class="section">
+  <div class="wrap">
+    <h2>FAQ</h2>
+
+    <details>
+      <summary>Do I need a custom kernel?</summary>
+      <p>No. It builds as a module against your stock kernel (CachyOS stable or LTS work fine).</p>
+    </details>
+
+    <details>
+      <summary>Why not <code>modprobe kernelsu</code>?</summary>
+      <p>Plain modprobe fails with <code>Unknown symbol change_pid</code>, because the module needs PID-namespace symbols that modprobe can't resolve outside Android. <code>load-kernelsu</code> uses <code>modloader</code> and handles that.</p>
+    </details>
+
+    <details>
+      <summary>It installs during boot, does it also unload?</summary>
+      <p><code>kernelsu-autload.service</code> loads the module at boot. Uninstalling removes the service so it stops auto-loading.</p>
+    </details>
+
+    <details>
+      <summary>Version numbers / <code>v0.0.1</code></summary>
+      <p>The module reports <code>KSU_VERSION = 30000 + commits</code>. If the Manager shows a too-low version, ensure DKMS received <code>KSU_GIT_VERSION</code> and <code>KSU_GIT_TAG</code> (the installer does this automatically).</p>
+    </details>
+
+    <details>
+      <summary>Where is SUSFS?</summary>
+      <p>Removed. This is deliberately vanilla KernelSU-Next for stable, plain root on unpatched kernels.</p>
+    </details>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>KernelSU-Next DKMS</span>
+    <a href="https://github.com/Polaricito/KernelSU-Next-DKMS">GitHub</a>
+    <span class="dim">Serving from the <code>gh-pages</code> branch of this repo.</span>
+  </div>
+</footer>
+
+</body>
+</html>
