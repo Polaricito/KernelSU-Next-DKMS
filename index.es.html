@@ -7,7 +7,7 @@
 <meta name="description" content="KernelSU-Next como módulo kernel cargable (DKMS) para ejecutar root dentro de Waydroid en CachyOS y otros hosts Linux x86_64.">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="logo.png">
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -27,10 +27,13 @@
           <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
         </svg>
       </a>
-      <select class="lang" onchange="location.href = this.value" aria-label="Idioma">
-        <option value="index.html">English</option>
-        <option value="index.es.html" selected>Español</option>
-      </select>
+      <span class="lang-wrap">
+        <img class="lang-icon" src="translate.png" alt="" width="18" height="16">
+        <select class="lang" onchange="location.href = this.value" aria-label="Idioma">
+          <option value="index.html">English</option>
+          <option value="index.es.html" selected>Español</option>
+        </select>
+      </span>
     </nav>
   </div>
 </header>
@@ -40,7 +43,7 @@
     <h1>Una solución de root basada en kernel para Waydroid</h1>
     <p class="lead">
       KernelSU-Next empaquetado como módulo kernel cargable y compilado con DKMS —
-      root dentro de Waydroid en kernels CachyOS estándar, sin kernel personalizado.
+      root dentro de Waydroid en kernels CachyOS 6.x estándar (probado en 6.18), sin kernel personalizado.
     </p>
     <div class="cta">
       <a class="btn btn-primary" href="#install">Empezar</a>
@@ -143,6 +146,11 @@ sudo ./install.sh</code></pre>
 <section id="faq" class="section">
   <div class="wrap">
     <h2>Preguntas frecuentes</h2>
+
+    <details>
+      <summary>¿Qué kernels son compatibles?</summary>
+      <p>Solo 6.x. KernelSU-Next upstream lista 6.6 como el kernel máximo soportado oficialmente, pero esta compilación DKMS está probada en versiones 6.x más nuevas (6.18), así que el límite no se aplica aquí.</p>
+    </details>
 
     <details>
       <summary>¿Necesito un kernel personalizado?</summary>
