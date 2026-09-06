@@ -7,7 +7,7 @@
 <meta name="description" content="KernelSU-Next as a loadable kernel module (DKMS) for running root inside Waydroid on CachyOS and other x86_64 Linux hosts.">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="logo.png">
-<link rel="stylesheet" href="style.css?v=10">
+<link rel="stylesheet" href="style.css?v=11">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -43,7 +43,7 @@
     <h1>A kernel-based root solution for Waydroid</h1>
     <p class="lead">
       KernelSU-Next packaged as a loadable kernel module and built with DKMS —
-      root inside Waydroid on stock 6.x CachyOS kernels (tested on 6.18), no custom kernel required.
+      root inside Waydroid on stock CachyOS kernels (6.x, tested on 7.2), no custom kernel required.
     </p>
     <div class="cta">
       <a class="btn btn-primary" href="#install">Get started</a>
@@ -149,7 +149,7 @@ sudo ./install.sh</code></pre>
 
     <details class="reveal">
       <summary>Which kernels are supported?</summary>
-      <p>Only 6.x. Upstream KernelSU-Next lists 6.6 as the highest officially supported kernel, but this DKMS build is tested on newer 6.x releases (6.18), so the limit isn't enforced here.</p>
+      <p>6.x and 7.x. Upstream KernelSU-Next lists 6.6 as the highest officially supported kernel, but this DKMS build is tested on newer 6.x and 7.x releases (currently running on 7.2), so the limit isn't enforced here.</p>
     </details>
 
     <details class="reveal">
