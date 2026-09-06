@@ -3,74 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KernelSU-Next DKMS — KernelSU for x86_64 Waydroid</title>
+<title>KernelSU-Next DKMS — A kernel-based root solution for Waydroid</title>
 <meta name="description" content="KernelSU-Next as a loadable kernel module (DKMS) for running root inside Waydroid on CachyOS and other x86_64 Linux hosts.">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
 <link rel="stylesheet" href="style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <header>
   <div class="wrap header-inner">
     <a class="brand" href="#top">
-      <span class="logo">KSU</span>
-      <span class="brand-name">KernelSU-Next&nbsp;·&nbsp;DKMS</span>
+      <img class="logo" src="logo.png" alt="KernelSU">
+      <span class="brand-name">KernelSU-Next</span>
     </a>
     <nav>
-      <a href="#how">How it works</a>
-      <a href="#install">Install</a>
-      <a href="#uninstall">Uninstall</a>
-      <a href="#faq">FAQ</a>
+      <a href="#install">Guide</a>
+      <a href="https://github.com/Polaricito/KernelSU-Next-DKMS">GitHub</a>
     </nav>
   </div>
 </header>
 
 <section id="top" class="hero">
-  <div class="wrap">
-    <h1>Run root inside Waydroid on stock&nbsp;kernels.</h1>
+  <div class="wrap hero-inner">
+    <h1>A kernel-based root solution for Waydroid</h1>
     <p class="lead">
-      KernelSU-Next packaged as a <strong>loadable kernel module</strong> and built with
-      <strong>DKMS</strong> — no custom kernel, no SUSFS, no patching. Works on
-      CachyOS stable, LTS, and any kernel you already run.
+      KernelSU-Next packaged as a loadable kernel module and built with DKMS —
+      root inside Waydroid on stock CachyOS kernels, no custom kernel required.
     </p>
     <div class="cta">
-      <pre class="code"><code>curl -fsSL https://raw.githubusercontent.com/Polaricito/KernelSU-Next-DKMS/master/installer.sh | sudo bash</code></pre>
+      <a class="btn btn-primary" href="#install">Get started</a>
+      <a class="btn btn-secondary" href="https://github.com/Polaricito/KernelSU-Next-DKMS">View on GitHub</a>
     </div>
-    <div class="badges">
-      <span class="badge">x86_64</span>
-      <span class="badge">DKMS · auto-rebuilds</span>
-      <span class="badge">modloader</span>
-      <span class="badge">Manager: com.rifsxd.ksunext</span>
-    </div>
+    <img class="hero-logo" src="logo.png" alt="KernelSU">
   </div>
 </section>
 
 <section id="how" class="section alt">
   <div class="wrap">
-    <h2>How it works</h2>
-    <p>
-      Instead of compiling KernelSU-Next into a kernel, this project ships it as a
-      <strong>.ko module</strong> that is built against your <em>running</em> kernel with
-      DKMS and auto-rebuilt whenever the kernel updates.
+    <h2>Kernel module, not a kernel patch</h2>
+    <p class="section-intro">
+      KernelSU-Next ships as a loadable module built with DKMS against your running
+      kernel — no custom kernel, no SUSFS, nothing to maintain across updates.
     </p>
     <div class="grid">
       <div class="card">
-        <h3>1 · Build</h3>
-        <p>DKMS compiles <code>kernelsu.ko</code> against <code>$(uname -r)</code> headers, passing the current git commit count as the version.</p>
+        <h3>Build with DKMS</h3>
+        <p><code>kernelsu.ko</code> compiles against <code>$(uname -r)</code> headers and auto-rebuilds on every kernel update.</p>
       </div>
       <div class="card">
-        <h3>2 · Load</h3>
-        <p>Loaded with <code>load-kernelsu</code> (via <code>modloader</code>), which resolves the PID-namespace symbols that plain <code>modprobe</code> can't on non-Android kernels.</p>
+        <h3>Loads on stock kernels</h3>
+        <p>Loaded via <code>modloader</code> instead of modprobe, which can't resolve the PID-namespace symbols the module needs.</p>
       </div>
       <div class="card">
-        <h3>3 · Grant</h3>
-        <p>The <code>ksu_driver</code> anon-inode and supercall allow the Manager app (<code>com.rifsxd.ksunext</code>) to grant root inside the Waydroid container.</p>
+        <h3>Root access control</h3>
+        <p>Only permitted apps see <code>su</code>. The Manager app (<code>com.rifsxd.ksunext</code>) grants and manages root.</p>
       </div>
       <div class="card">
-        <h3>4 · Stage &amp; serve</h3>
-        <p>systemd services auto-load the module at boot and stage the su/ksud binaries into the container so apps get a working <code>su</code>.</p>
+        <h3>Auto-load &amp; stage</h3>
+        <p>systemd services load the module at boot and stage su/ksud into the Waydroid container so apps get a working <code>su</code>.</p>
       </div>
     </div>
 
