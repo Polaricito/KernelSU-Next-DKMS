@@ -7,7 +7,7 @@
 <meta name="description" content="KernelSU-Next as a loadable kernel module (DKMS) for running root inside Waydroid on CachyOS and other x86_64 Linux hosts.">
 <link rel="icon" type="image/png" href="logo.png">
 <link rel="apple-touch-icon" href="logo.png">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -69,15 +69,25 @@
     </div>
 
     <div class="diagram">
-<pre>
-       host Linux kernel                   Waydroid LXC container (x86_64 / Android)
- ┌────────────────────────────┐          ┌────────────────────────────────────────────┐
- │ kernelsu.ko (DKMS, host)   │          │ com.rifsxd.ksunext (Manager app)           │
- │   [ksu_driver] anon-inode  │ ◄──fd─── │   │ (libsu root shell)                     │
- │   reboot() supercall       │ ◄─────── │   ▼                                        │
- │   sucompat / allowlist     │ ◄─────── │ /data/adb/ksud (staged by autoload)        │
- └────────────────────────────┘          └────────────────────────────────────────────┘
-</pre>
+      <pre>
+ host Linux kernel (x86_64)
+ ┌────────────────────────────┐
+ │ kernelsu.ko (DKMS, host)   │
+ │   [ksu_driver] anon-inode  │
+ │   ksu_driver fd + reboot() │
+ │   sucompat / allowlist     │
+ └────────────────────────────┘
+      </pre>
+      <div class="diagram-arrow">⇅</div>
+      <pre>
+ Waydroid LXC container (Android)
+ ┌─────────────────────────────────────┐
+ │ com.rifsxd.ksunext (Manager app)    │
+ │  │ (libsu root shell)               │
+ │  ▼                                  │
+ │ /data/adb/ksud (staged by autoload) │
+ └─────────────────────────────────────┘
+      </pre>
     </div>
   </div>
 </section>

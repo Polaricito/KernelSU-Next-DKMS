@@ -138,12 +138,14 @@ h3.sub { margin: 2rem 0 0.5rem; font-size: 1.05rem; }
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   text-decoration: none;
   font-weight: 600;
   font-size: 1rem;
   padding: 0.65rem 1.4rem;
+  border: 1px solid transparent;
   border-radius: 999px;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 .btn-primary {
   background: var(--accent);
@@ -153,7 +155,7 @@ h3.sub { margin: 2rem 0 0.5rem; font-size: 1.05rem; }
 .btn-secondary {
   background: var(--bg);
   color: var(--text);
-  border: 1px solid var(--border);
+  border-color: var(--border);
 }
 .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
@@ -175,15 +177,33 @@ h3.sub { margin: 2rem 0 0.5rem; font-size: 1.05rem; }
   margin: 1rem 0 1.5rem;
 }
 .code code { white-space: pre; }
-.diagram pre, .diagram .code {
+
+/* Diagram (host box + container box) */
+.diagram {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.diagram pre {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-x: auto;
+  margin: 0;
   color: var(--text);
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow-x: auto;
+  padding: 0.75rem 1rem;
   font-family: var(--mono);
   font-size: 0.8rem;
   line-height: 1.5;
+}
+.diagram-arrow {
+  flex: 0 0 auto;
+  font-size: 1.4rem;
+  color: var(--muted);
+  text-align: center;
 }
 
 /* Grid / cards */
@@ -256,4 +276,6 @@ footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
   .hero-logo { width: 120px; height: 120px; }
   nav { gap: 1rem; }
   nav a { font-size: 0.9rem; }
+  .diagram { flex-direction: column; align-items: stretch; }
+  .diagram-arrow { transform: rotate(90deg); }
 }
